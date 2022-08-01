@@ -19,6 +19,7 @@ class StatsParserZephyr:
         self.__clearStats()
 
     def __clearStats(self):
+        #TODO: rename method, unclear
         if len(self.statsOutput) == 0:
             return
 
