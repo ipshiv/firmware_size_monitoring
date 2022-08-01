@@ -66,6 +66,7 @@ class StatsParserZephyr:
                 self.diFFOutputTable[".totalLen"] = len(
                     str(value["total"])) * 2 + len(" (+) ")
 
+        self.diFFOutputTable["nameLen"] += len(":yellow_circle:")
     def __calculateLibraries(self):
         self.statsLibraries = {}
         for file in self.statsFiles:
@@ -246,6 +247,46 @@ class StatsParserZephyr:
                 key, headerColLib, value["text"], headerColText, value["bss"], headerColBss, value["data"],  headerColData, value["total"],  headerColTotal)
         return markdownTable
 
+    def generateDiffTable(self, libraries):
+        headerColText = " " * \
+            (self.diFFOutputTable[".textLen"] - len(" .text"))
+        headerColBss = " " * \
+            (self.diFFOutputTable[".bssLen"] - len(" .bss"))
+        headerColData = " " * \
+            (self.diFFOutputTable[".dataLen"] - len(" .data"))
+        headerColLib = " " * \
+            (self.diFFOutputTable["nameLen"] - len(" Module"))
+        headerColTotal = " " * \
+            (self.diFFOutputTable[".totalLen"] - len(" total"))
+        __tableHeader = "| Module{} | .text{} | .bss{} | .data{} | total{} |\n|:{}|:{}:|:{}:|:{}:|:{}:|\n".format(
+            headerColLib, headerColText, headerColBss, headerColData, headerColTotal, "-" * (self.diFFOutputTable["nameLen"]),  "-" *
+            (self.diFFOutputTable[".textLen"]-1),
+            "-" * (self.diFFOutputTable[".bssLen"] - 1), "-" * (self.diFFOutputTable[".dataLen"]-1), "-" * (self.diFFOutputTable[".totalLen"] - 1))
+        markdownTable = __tableHeader
+        for key, value in libraries.items():
+            sign = ""
+            if value["diffs"]["total"] == 0:
+                sign = ":white_circle:"
+            elif value["diffs"]["total"] > 0:
+                sign = ":red_circle:"
+            elif value["diffs"]["total"] < 0:
+                sign = ":green_circle:"
+            headerColText = " " * \
+                (self.diFFOutputTable[".textLen"] - len(str(value["text"])) - len("(+)") - len(str(value["diffs"]["text"])) + 1)
+            headerColBss = " " * \
+                (self.diFFOutputTable[".bssLen"] - len(str(value["bss"])) - len("(+)") - len(str(value["diffs"]["bss"])) + 1)
+            headerColData = " " * \
+                (self.diFFOutputTable[".dataLen"] - len(str(value["data"])) - len("(+)") - len(str(value["diffs"]["data"])) + 1)
+            headerColLib = " " * \
+                (self.diFFOutputTable["nameLen"] - len(key) - len(sign))
+            headerColTotal = " " * \
+                (self.diFFOutputTable[".totalLen"] - len(str(value["total"])) - len("(+)") - len(str(value["diffs"]["total"])) + 1)
+            
+            markdownTable += "| {}{}{}| {}({}){}| {}({}){}| {}({}){}| {}({}){}|\n".format(
+                sign, key, headerColLib, value["text"], value["diffs"]["text"], headerColText, value["bss"], value["diffs"]["bss"], headerColBss, value["data"], value["diffs"]["data"],  headerColData, value["total"], value["diffs"]["total"],  headerColTotal)
+
+
+
     def printStatsTable(self):
         mTable = self.generateStatsTable()
         print(mTable)
@@ -257,8 +298,10 @@ class StatsParserZephyr:
 
     def printDiffLibraries(self, input):
         inputData = self.__parseInput(input)
+        self.__calculateColumnsWidth()
+        libraries = inputData["libraries"]
         diff = self.__calculateDiffLibraries(libraries)
-        print("\n\ntext\tbss\tdata\tlib")
-        for key, value in self.statsLibraries.items():
-            print("{}({})\t{}({})\t{}({})\t{}({})".format(
-                value["text"], value["diffs"]["text"], value["bss"], value["diffs"]["bss"], value["data"], value["diffs"]["data"], key))
+        
+        print(markdownTable)
+
+        
