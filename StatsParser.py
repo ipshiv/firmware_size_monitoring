@@ -101,10 +101,108 @@ class StatsParserZephyr:
 
         return diffLibraries
 
+    def __parse_retrospective_table(self, table):
+        '''
+        This part is extremly hardcoded and
+        depends on valid input format.
+        But hey, I need result not flexibility!
+        '''
+        table_dict = {"size":0, "table":{}}
+        table = table.split("\n")
+        #get meta info from name
+        meta_line = table[0]
+        if "##" not in table[0]:
+            return
+        # ##Stats : 5 e.g.
+        table_dict["size"] = int(meta_line.split(":")[-1])
+        #get keys from header
+        header_line = table[1][1:-1]
+        keys = header_line.replace(" ","").split("|")
+        tmp_holder = []
+        for key in keys:
+            tmp_holder.append([key])
+        #parse line by line
+        for line in table[3:]:
+            if line == "":
+                break
+            print(line)
+            line_array = line[1:-1].replace(" ", "").split("|")
+            for i, data in enumerate(tmp_holder):
+                data.append(line_array[i])
+        for line in tmp_holder:
+            table_dict["table"].update({line[0]:line[1:]})
+        return table_dict
+
+    def __parse_lib_table(self, table):
+        '''
+        This part is extremly hardcoded and
+        depends on valid input format.
+        But hey, I need result not flexibility!
+        '''
+        table_dict = {}
+        table = table.split("\n")
+        #verify header
+        header_line = table[0][1:-1]
+        keys = header_line.replace(" ","").split("|")
+        for key in ["Module", ".text", ".bss", ".data"]:
+            if key not in keys:
+                return {}
+        #skip header
+        #parse line by line        
+        for line in table[2:]:
+            if line == "":
+                break
+            line_array = line[1:-1].replace(" ", "").split("|")
+            
+            lib = re.sub(" (:\w+:)", "", line_array[0])
+            for i, txt in enumerate(line_array[1:]):
+                #print(str(i), txt)
+                line_array[i + 1] = re.sub(" (\((\+|\-)\d+\))", "", txt)
+            
+            table_dict.update({lib: {"text": int(line_array[1]), "data": int(line_array[3]), "bss": int(line_array[2]), "total": int(line_array[4]), "diffs": {"text": 0, "data": 0, "bss": 0, "total": 0}}})
+
+        return table_dict
+
+
     def __parseInput(self, fileName):
-        warnings = 0
+        warnings = {}
         libraries = {}
-        return warnings, libraries
+        stats = {}
+        lib_table_txt = ""
+        warning_table_txt = ""
+        stats_table_txt = ""
+        with open(fileName, 'r') as input:
+            txt = input.read()
+            lib_table_start = txt.find("Libraries data")
+            if not lib_table_start:
+                return
+            lib_table_start += len("Libraries data\n")
+            retr_warnings_start = txt.find("## Warnings :", lib_table_start)
+            if not retr_warnings_start:
+                return
+            retr_stats_start = txt.find("## Stats :", retr_warnings_start)
+            if not retr_stats_start:
+                return
+            lib_table_txt = txt[lib_table_start : retr_warnings_start]
+            warning_table_txt = txt[retr_warnings_start : retr_stats_start]
+            stats_table_txt = txt[retr_stats_start: ]
+        
+        print(lib_table_txt)
+        print("_________________________________")
+        print(warning_table_txt)
+        print("_________________________________")
+        print(stats_table_txt)
+        print("_________________________________")
+        
+        libraries = self.__parse_lib_table(lib_table_txt)
+        warnings = self.__parse_retrospective_table(warning_table_txt)
+        stats = self.__parse_retrospective_table(stats_table_txt)
+        
+        print(warnings)
+        print(stats)
+        print(libraries)
+        
+        return {"warnings": warnings, "libraries": libraries, "stats": stats}
 
     def printStatsWarnings(self):
         print("Warnings >> " + str(self.countWarnings))
@@ -153,12 +251,12 @@ class StatsParserZephyr:
         print(mTable)
 
     def printDiffwarnings(self, input):
-        warnings, libraries = self.__parseInput(input)
+        inputData = self.__parseInput(input)
         print("Warnings {} ({})".format(
-            str(self.countWarnings), str(self.__calculateDiffWarnings(warnings))))
+            str(self.countWarnings), str(self.__calculateDiffWarnings(int(inputData["warnings"]["table"]["Count"][-1])))))
 
     def printDiffLibraries(self, input):
-        warnings, libraries = self.__parseInput(input)
+        inputData = self.__parseInput(input)
         diff = self.__calculateDiffLibraries(libraries)
         print("\n\ntext\tbss\tdata\tlib")
         for key, value in self.statsLibraries.items():
