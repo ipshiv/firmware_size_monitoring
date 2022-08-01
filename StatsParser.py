@@ -11,9 +11,9 @@ class StatsParserZephyr:
 
         self.statsLibraries = {}
         self.statsOutputTable = {
-            "nameLen": len(" name "), ".textLen": len(" .text "), ".bssLen": len(" .bss "), ".dataLen": len(" .data "), ".totalLen": len(" total ")}
+            "nameLen": len(" Module "), ".textLen": len(" .text "), ".bssLen": len(" .bss "), ".dataLen": len(" .data "), ".totalLen": len(" total ")}
         self.diFFOutputTable = {
-            "nameLen": len(" name "), ".textLen": len(" .text "), ".bssLen": len(" .bss "), ".dataLen": len(" .data "), ".totalLen": len(" total ")}
+            "nameLen": len(" Module "), ".textLen": len(" .text ") * 2 + len("(+)"), ".bssLen": len(" .bss ") * 2 + len("(+)"), ".dataLen": len(" .data ") * 2 + len("(+)"), ".totalLen": len(" total ") * 2 + len("(+)")}
         self.statsFiles = []
 
         self.__clearStats()
@@ -111,7 +111,7 @@ class StatsParserZephyr:
 
     def printStatsMemory(self):
         self.__calculateLibraries()
-        print("\n\ntext\tbss\tdata\tlib")
+        print("\n\ntext\tbss\tdata\tModule")
         for key, value in self.statsLibraries.items():
             print("{}\t{}\t{}\t{}".format(
                 value["text"], value["bss"], value["data"], key))
@@ -125,11 +125,13 @@ class StatsParserZephyr:
         headerColData = " " * \
             (self.statsOutputTable[".dataLen"] - len(" .data"))
         headerColLib = " " * \
-            (self.statsOutputTable["nameLen"] - len(" lib"))
-        __tableHeader = "| .text{} | .bss{} | .data{} | lib{} |\n|:{}:|:{}:|:{}:|:{}:|\n".format(
-            headerColText, headerColBss, headerColData, headerColLib, "-" *
+            (self.statsOutputTable["nameLen"] - len(" Module"))
+        headerColTotal = " " * \
+            (self.statsOutputTable[".totalLen"] - len(" total"))
+        __tableHeader = "| Module{} | .text{} | .bss{} | .data{} | total{} |\n|:{}|:{}:|:{}:|:{}:|:{}:|\n".format(
+            headerColLib, headerColText, headerColBss, headerColData, headerColTotal, "-" * (self.statsOutputTable["nameLen"]),  "-" *
             (self.statsOutputTable[".textLen"] - 1),
-            "-" * (self.statsOutputTable[".bssLen"] - 1), "-" * (self.statsOutputTable[".dataLen"] - 1), "-" * (self.statsOutputTable["nameLen"] - 1))
+            "-" * (self.statsOutputTable[".bssLen"] - 1), "-" * (self.statsOutputTable[".dataLen"] - 1), "-" * (self.statsOutputTable[".totalLen"] - 1))
         markdownTable = __tableHeader
         for key, value in self.statsLibraries.items():
             headerColText = " " * \
@@ -140,8 +142,10 @@ class StatsParserZephyr:
                 (self.statsOutputTable[".dataLen"] - len(str(value["data"])))
             headerColLib = " " * \
                 (self.statsOutputTable["nameLen"] - len(key))
-            markdownTable += "| {}{}| {}{}| {}{}| {}{}|\n".format(
-                value["text"], headerColText, value["bss"], headerColBss, value["data"],  headerColData, key, headerColLib)
+            headerColTotal = " " * \
+                (self.statsOutputTable[".totalLen"] - len(str(value["total"])))
+            markdownTable += "| {}{}| {}{}| {}{}| {}{}| {}{}|\n".format(
+                key, headerColLib, value["text"], headerColText, value["bss"], headerColBss, value["data"],  headerColData, value["total"],  headerColTotal)
         return markdownTable
 
     def printStatsTable(self):
