@@ -78,7 +78,7 @@ class StatsParserZephyr:
             self.statsLibraries[file["lib"]]["total"] += file["total"]
 
     def __calculateDiffWarnings(self, previousWarnings):
-        return (previousWarnings - self.countWarnings)
+        return (self.countWarnings - previousWarnings)
 
     def __calculateDiffLibraries(self, libraries):
         diffLibraries = deepcopy(self.statsLibraries)
