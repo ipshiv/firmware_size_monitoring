@@ -89,7 +89,10 @@ class StatsParserZephyr:
     def __calculateDiffLibraries(self, libraries):
         diffLibraries = deepcopy(self.statsLibraries)
         for lib, data in libraries.items():
-            if lib not in list(self.statsLibraries.keys()) and data["total"] != 0:
+            if lib not in list(self.statsLibraries.keys()):
+                if data["total"] == 0:
+                    print("library {} was dropped".format(lib))
+                    pass
                 data["diffs"]["text"] = -data["text"]
                 data["diffs"]["data"] = -data["data"]
                 data["diffs"]["bss"] = -data["bss"]
