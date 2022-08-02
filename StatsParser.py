@@ -394,7 +394,7 @@ class StatsParserZephyr:
 
         fig.tight_layout()
 
-        plt.show()
+        plt.savefig('templates/graphStats.svg', dpi=150)
                 
 
 
