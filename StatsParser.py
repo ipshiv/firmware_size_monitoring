@@ -40,7 +40,7 @@ class StatsParserZephyr:
                 "filename": line[4],
                 "lib": line[5]
             })
-            print(self.statsFiles[-1])
+            #print(self.statsFiles[-1])
 
     def __calculateColumnsWidth(self):
         for name, value in self.statsLibraries.items():
@@ -69,8 +69,6 @@ class StatsParserZephyr:
                     str(value["total"])) * 2 + len(" (+) ")
 
         self.diFFOutputTable["nameLen"] += len(":yellow_circle:")
-        print(self.statsOutputTable)
-        print(self.diFFOutputTable)
 
     def __calculateLibraries(self):
         self.statsLibraries = {}
@@ -134,7 +132,7 @@ class StatsParserZephyr:
         for line in table[3:]:
             if line == "":
                 break
-            print(line)
+            #print(line)
             line_array = line[1:-1].replace(" ", "").split("|")
             for i, data in enumerate(tmp_holder):
                 data.append(line_array[i])
@@ -196,20 +194,20 @@ class StatsParserZephyr:
             warning_table_txt = txt[retr_warnings_start : retr_stats_start]
             stats_table_txt = txt[retr_stats_start: ]
         
-        print(lib_table_txt)
-        print("_________________________________")
-        print(warning_table_txt)
-        print("_________________________________")
-        print(stats_table_txt)
-        print("_________________________________")
+        #print(lib_table_txt)
+        #print("_________________________________")
+        #print(warning_table_txt)
+        #print("_________________________________")
+        #print(stats_table_txt)
+        #print("_________________________________")
         
         libraries = self.__parse_lib_table(lib_table_txt)
         warnings = self.__parse_retrospective_table(warning_table_txt)
         stats = self.__parse_retrospective_table(stats_table_txt)
         
-        print(warnings)
-        print(stats)
-        print(libraries)
+        #print(warnings)
+        #print(stats)
+        #print(libraries)
         
         return {"warnings": warnings, "libraries": libraries, "stats": stats}
 
