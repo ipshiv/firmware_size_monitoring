@@ -336,6 +336,34 @@ class StatsParserZephyr:
             outputGraph += "{}{} ".format(" " * (_resolution - len(build)), build)
         print(outputGraph)
 
+    def plotGraphWarnings(self, input):
+        inputData = self.__parseInput(input)
+        _steps = 1
+        data = [
+            int(warning) / _steps for warning in inputData["warnings"]["table"]["Count"]]
+        labels = inputData["warnings"]["table"]["Build"]
+
+        x = np.arange(len(labels))  # the label locations
+        width = 0.75  # the width of the bars
+
+        fig, ax = plt.subplots()
+        # rects1 = ax.bar(x - width/2, dataFlash, width, label='Flash')
+        # rects2 = ax.bar(x + width/2, dataRam, width, label='RAM')
+
+        rects1 = ax.bar(labels, data, width, label='Warnings')
+
+        # Add some text for labels, title and custom x-axis tick labels, etc.
+        ax.set_ylabel('Count')
+        ax.set_title('# Build')
+        ax.set_xticks(x, labels)
+        ax.legend()
+
+        ax.bar_label(rects1, padding=3)
+
+        fig.tight_layout()
+        plt.savefig('templates/graphWarnings.svg', dpi=150)
+        # plt.show()
+
     def plotGraphStats(self, input):
         inputData = self.__parseInput(input)
         _delim = 1000
