@@ -30,7 +30,8 @@ class StatsParserZephyr:
             statLine = statLine.replace(')\n', '')
             line = statLine.split(' ')
             line = [x for x in line if x]
-            print(line)
+            if len(line) < 6:
+                break
             self.statsFiles.append({
                 "text": int(line[0]),
                 "data": int(line[1]),
