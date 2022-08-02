@@ -1,5 +1,7 @@
 from copy import deepcopy
 import re
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 class StatsParserZephyr:
@@ -310,7 +312,62 @@ class StatsParserZephyr:
         mTable = self.generateDiffTable(diff)
         print(mTable)
 
-        
-        print(markdownTable)
+    def plotAsciiGraphWarnings(self, input):
+        inputData = self.__parseInput(input)
+        _steps = 1
+        _resolution = 9
+        plotWidth = len(inputData["warnings"]["table"]["Count"])
+        data = [int(warning) / _steps for warning in inputData["warnings"]["table"]["Count"]]
+        plotHeigth = int(max(data))
+        outputGraph = "warnings /\n"
+        for y in reversed(range(plotHeigth + 1)):
+            outputGraph += "{}{} | ".format(" " * (len("warnings") - len(str(y))), y)
+            for x in range(plotWidth):
+                if data[x] < y:
+                    outputGraph += " " * _resolution
+                else:
+                    outputGraph += "x" * _resolution
+                outputGraph += " "
+            outputGraph += '\n'
+        outputGraph += ' ' * len(str("warnings")) + ' ' + '-' * (_resolution + 2) * plotWidth  + '\\ #build\n'
+        outputGraph += ' ' * len(str("warnings")) + '  '
+        for x in range(plotWidth):
+            build = inputData["warnings"]["table"]["Build"][x]
+            outputGraph += "{}{} ".format(" " * (_resolution - len(build)), build)
+        print(outputGraph)
+
+    def plotGraphStats(self, input):
+        inputData = self.__parseInput(input)
+        _delim = 1000
+        print(inputData["stats"]["table"])
+        dataFlash = [int(data) / _delim for data in inputData["stats"]["table"]["flash,B"]]
+        dataRam = [int(data) / _delim for data in inputData["stats"]["table"]["ram,B"]]
+        labels = inputData["stats"]["table"]["Build"]
+
+        x = np.arange(len(labels))  # the label locations
+        width = 0.75  # the width of the bars
+
+        fig, ax = plt.subplots()
+        # rects1 = ax.bar(x - width/2, dataFlash, width, label='Flash')
+        # rects2 = ax.bar(x + width/2, dataRam, width, label='RAM')
+
+        rects1 = ax.bar(labels, dataRam, width, label='RAM')
+        rects2 = ax.bar(labels, dataFlash, width, bottom=dataRam,
+            label='Flash')
+
+        # Add some text for labels, title and custom x-axis tick labels, etc.
+        ax.set_ylabel('Size, KB')
+        ax.set_title('# Build')
+        ax.set_xticks(x, labels)
+        ax.legend()
+
+        ax.bar_label(rects1, padding=3)
+        ax.bar_label(rects2, padding=3)
+
+        fig.tight_layout()
+
+        plt.show()
+                
+
 
         

@@ -12,6 +12,8 @@ def main():
     sparser.printStatsTable()
     sparser.printDiffwarnings("templates/STATS.md")
     sparser.printDiffLibraries("templates/STATS.md")
+    sparser.plotAsciiGraphWarnings("templates/STATS.md")
+    sparser.plotGraphStats("templates/STATS.md")
 
 
 if __name__ == '__main__':
