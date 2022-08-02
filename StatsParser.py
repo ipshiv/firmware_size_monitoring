@@ -292,7 +292,7 @@ class StatsParserZephyr:
             
             markdownTable += "| {}{}{}| {}({}){}| {}({}){}| {}({}){}| {}({}){}|\n".format(
                 sign, key, headerColLib, value["text"], value["diffs"]["text"], headerColText, value["bss"], value["diffs"]["bss"], headerColBss, value["data"], value["diffs"]["data"],  headerColData, value["total"], value["diffs"]["total"],  headerColTotal)
-
+        return markdownTable
 
 
     def printStatsTable(self):
@@ -309,6 +309,9 @@ class StatsParserZephyr:
         self.__calculateColumnsWidth()
         libraries = inputData["libraries"]
         diff = self.__calculateDiffLibraries(libraries)
+        mTable = self.generateDiffTable(diff)
+        print(mTable)
+
         
         print(markdownTable)
 
