@@ -5,7 +5,6 @@ from StatsParser import StatsParserZephyr
 
 
 def main():
-    print("I'm main mock!")
     sparser = StatsParserZephyr("test_input/output.txt", "test_input/status.txt")
     sparser.printStatsWarnings()
     sparser.printStatsMemory()
@@ -17,5 +16,5 @@ def main():
     sparser.plotGraphWarnings("templates/STATS.md")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
