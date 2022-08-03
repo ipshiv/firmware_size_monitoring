@@ -1,15 +1,20 @@
 from copy import deepcopy
 import re
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 
 
 class StatsParserZephyr:
     def __init__(self, buildOutput="", statsOutput=""):
+        if not os.access(buildOutput, os.R_OK) or os.access(statsOutput, os.R_OK):
+            return
+
         with open(buildOutput, "r") as input:
             self.countWarnings = len(
                 [line for line in input.readlines() if "warning:" in line]
             )
+
         with open(statsOutput, "r") as input:
             self.statsOutput = input.readlines()[2:]
 
