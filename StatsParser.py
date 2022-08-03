@@ -10,16 +10,54 @@ class StatsParserZephyr:
         if not os.access(buildOutput, os.R_OK) or not os.access(statsOutput, os.R_OK):
             raise Exception("Input files are unreadable or not exist!")
 
+        self.buildStats = ""
+        self.buildStatsRow = []
         with open(buildOutput, "r") as input:
-            self.countWarnings = len(
-                [line for line in input.readlines() if "warning:" in line]
+            txt = input.read()
+            txt_array = txt.split("\n")
+            self.countWarnings = len([line for line in txt_array if "warning:" in line])
+            __num_of_lines_in_mem_stats = 4
+            mem_reg_start = txt.find("Memory region")
+            line_index = [
+                mem_reg_start + i
+                for i, c in enumerate(txt[mem_reg_start:])
+                if c == "\n"
+            ]
+            mem_reg_end = line_index[__num_of_lines_in_mem_stats - 1]
+            self.buildStats = txt[mem_reg_start:mem_reg_end]
+            # | Build   | flash_region, B | flash, B | ram_region, B | ram, B |
+            build_stats_array = self.buildStats.split("\n")
+            # FLASH
+            tmp_arr = build_stats_array[1].replace("FLASH: ", "").strip().split("B")
+            flash_util = (
+                int(tmp_arr[0])
+                if "K" not in tmp_arr[0]
+                else int(tmp_arr[0].replace("K", "")) * 1000
             )
+            flas_region = (
+                int(tmp_arr[1])
+                if "K" not in tmp_arr[1]
+                else int(tmp_arr[1].replace("K", "")) * 1000
+            )
+            # RAM
+            tmp_arr = build_stats_array[2].replace("SRAM: ", "").strip().split("B")
+            sram_util = (
+                int(tmp_arr[0])
+                if "K" not in tmp_arr[0]
+                else int(tmp_arr[0].replace("K", "")) * 1000
+            )
+            sram_region = (
+                int(tmp_arr[1])
+                if "K" not in tmp_arr[1]
+                else int(tmp_arr[1].replace("K", "")) * 1000
+            )
+            self.buildStatsRow = ["", flas_region, flash_util, sram_region, sram_util]
 
         self.statsLibraries = {}
         self.statsFiles = []
 
         with open(statsOutput, "r") as input:
-           self.statsFiles = self.__extractStats(input.readlines()[2:])
+            self.statsFiles = self.__extractStats(input.readlines()[2:])
         self.statsOutputTable = {
             "nameLen": len(" Module "),
             ".textLen": len(" .text "),
@@ -38,7 +76,7 @@ class StatsParserZephyr:
     def __extractStats(self, stats):
         if len(stats) == 0:
             return
-        
+
         statsFiles = []
 
         for statLine in stats:
