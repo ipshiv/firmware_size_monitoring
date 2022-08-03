@@ -354,7 +354,7 @@ class StatsParserZephyr:
             )
         return markdownTable
 
-    def generateDiffTable(self, libraries):
+    def __generateDiffTable(self, libraries):
         headerColText = " " * (self.diFFOutputTable[".textLen"] - len(" .text"))
         headerColBss = " " * (self.diFFOutputTable[".bssLen"] - len(" .bss"))
         headerColData = " " * (self.diFFOutputTable[".dataLen"] - len(" .data"))
@@ -434,6 +434,14 @@ class StatsParserZephyr:
             )
         return markdownTable
 
+    def generateDiffTable(self, input):
+        inputData = self.__parseInput(input)
+        self.__calculateColumnsWidth()
+        libraries = inputData["libraries"]
+        diff = self.__calculateDiffLibraries(libraries)
+        markdownTable = self.__generateDiffTable(diff)
+        return markdownTable
+
     def printStatsTable(self):
         mTable = self.generateStatsTable()
         print(mTable)
@@ -452,11 +460,7 @@ class StatsParserZephyr:
         )
 
     def printDiffLibraries(self, input):
-        inputData = self.__parseInput(input)
-        self.__calculateColumnsWidth()
-        libraries = inputData["libraries"]
-        diff = self.__calculateDiffLibraries(libraries)
-        mTable = self.generateDiffTable(diff)
+        mTable = self.generateDiffTable(input)
         print(mTable)
 
     def plotAsciiGraphWarnings(self, input):
@@ -517,7 +521,6 @@ class StatsParserZephyr:
 
         fig.tight_layout()
         plt.savefig("templates/graphWarnings.svg", dpi=150)
-        # plt.show()
 
     def plotGraphStats(self, input):
         inputData = self.__parseInput(input)
