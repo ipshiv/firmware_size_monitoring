@@ -163,11 +163,10 @@ class StatsParserZephyr:
                 break
             line_array = line[1:-1].replace(" ", "").split("|")
             
-            lib = re.sub(" (:\w+:)", "", line_array[0])
+            lib = re.sub("(:\w+:)", "", line_array[0])
             for i, txt in enumerate(line_array[1:]):
                 #print(str(i), txt)
-                line_array[i + 1] = re.sub(" (\((\+|\-)\d+\))", "", txt)
-            
+                line_array[i + 1] = re.sub("(\((\+|\-|)\d+\))", "", txt)
             table_dict.update({lib: {"text": int(line_array[1]), "data": int(line_array[3]), "bss": int(line_array[2]), "total": int(line_array[4]), "diffs": {"text": 0, "data": 0, "bss": 0, "total": 0}}})
 
         return table_dict
