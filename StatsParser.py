@@ -267,6 +267,7 @@ class StatsParserZephyr:
             )
 
     def generateStatsTable(self):
+        self.__calculateLibraries()
         self.__calculateColumnsWidth()
         headerColText = " " * (self.statsOutputTable[".textLen"] - len(" .text"))
         headerColBss = " " * (self.statsOutputTable[".bssLen"] - len(" .bss"))
