@@ -7,18 +7,20 @@ import numpy as np
 
 class StatsParserZephyr:
     def __init__(self, buildOutput="", statsOutput=""):
-        if not os.access(buildOutput, os.R_OK) or os.access(statsOutput, os.R_OK):
-            return
+        if not os.access(buildOutput, os.R_OK) or not os.access(statsOutput, os.R_OK):
+            raise Exception("Input files are unreadable or not exist!")
 
         with open(buildOutput, "r") as input:
             self.countWarnings = len(
                 [line for line in input.readlines() if "warning:" in line]
             )
 
-        with open(statsOutput, "r") as input:
-            self.statsOutput = input.readlines()[2:]
-
         self.statsLibraries = {}
+        self.statsFiles = []
+
+        with open(statsOutput, "r") as input:
+            self.__extractStats(input.readlines()[2:])
+
         self.statsOutputTable = {
             "nameLen": len(" Module "),
             ".textLen": len(" .text "),
@@ -33,17 +35,13 @@ class StatsParserZephyr:
             ".dataLen": len(" .data ") * 2 + len("(+)"),
             ".totalLen": len(" total ") * 2 + len("(+)"),
         }
-        self.statsFiles = []
 
-        self.__clearStats()
-
-    def __clearStats(self):
-        # TODO: rename method, unclear
-        if len(self.statsOutput) == 0:
+    def __extractStats(self, stats):
+        if len(stats) == 0:
             return
 
         self.statsFiles = []
-        for statLine in self.statsOutput:
+        for statLine in stats:
             statLine = statLine.replace("(ex", "")
             statLine = statLine.replace(")\n", "")
             line = statLine.split(" ")
@@ -60,7 +58,6 @@ class StatsParserZephyr:
                     "lib": line[5],
                 }
             )
-            # print(self.statsFiles[-1])
 
     def __calculateColumnsWidth(self):
         for name, value in self.statsLibraries.items():
