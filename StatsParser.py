@@ -19,8 +19,7 @@ class StatsParserZephyr:
         self.statsFiles = []
 
         with open(statsOutput, "r") as input:
-            self.__extractStats(input.readlines()[2:])
-
+           self.statsFiles = self.__extractStats(input.readlines()[2:])
         self.statsOutputTable = {
             "nameLen": len(" Module "),
             ".textLen": len(" .text "),
@@ -39,8 +38,9 @@ class StatsParserZephyr:
     def __extractStats(self, stats):
         if len(stats) == 0:
             return
+        
+        statsFiles = []
 
-        self.statsFiles = []
         for statLine in stats:
             statLine = statLine.replace("(ex", "")
             statLine = statLine.replace(")\n", "")
@@ -48,7 +48,7 @@ class StatsParserZephyr:
             line = [x for x in line if x]
             if len(line) < 6:
                 break
-            self.statsFiles.append(
+            statsFiles.append(
                 {
                     "text": int(line[0]),
                     "data": int(line[1]),
@@ -58,6 +58,7 @@ class StatsParserZephyr:
                     "lib": line[5],
                 }
             )
+        return statsFiles
 
     def __calculateColumnsWidth(self):
         for name, value in self.statsLibraries.items():
