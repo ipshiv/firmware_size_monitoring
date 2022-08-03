@@ -32,7 +32,14 @@ def main(path):
     output_data["current_build"]["build_stats_row"][0] = output_data["current_build"][
         "build_sha"
     ]
-    output_data["current_build"]["lib_stats_markdown"] = sparser.generateStatsTable()
+    if not os.access(os.path.join(root_path, "resources/STATS.md"), os.R_OK):
+        output_data["current_build"][
+            "lib_stats_markdown"
+        ] = sparser.generateStatsTable()
+    else:
+        output_data["current_build"]["lib_stats_markdown"] = sparser.generateDiffTable(
+            os.path.join(root_path, "resources/STATS.md")
+        )
 
     print(output_data)
 
