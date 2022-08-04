@@ -517,6 +517,7 @@ class StatsParserZephyr:
         return markdownTable
 
     def generateDiffTable(self, input):
+        self.__calculateLibraries()
         inputData = self.__parseInput(input)
         self.__calculateColumnsWidth()
         libraries = inputData["libraries"]
