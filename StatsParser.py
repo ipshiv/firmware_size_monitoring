@@ -265,39 +265,87 @@ class StatsParserZephyr:
 
         return table_dict
 
+    def __invokeSelfWarnings(self, warnings):
+
+        if len(warnings["table"]["Build"]) >= warnings["size"]:
+            warnings["table"]["Count"] = warnings["table"]["Count"][1:]
+            warnings["table"]["Build"] = warnings["table"]["Build"][1:]
+
+        warnings["table"]["Count"].append(self.countWarnings)
+        warnings["table"]["Build"].append(self.buildHash)
+
+        return warnings
+
+    def __invokeSelfStats(self, stats):
+
+        if len(stats["table"]["Build"]) >= stats["size"]:
+            stats["table"]["Build"] = stats["table"]["Build"][1:]
+            stats["table"]["flash_region,B"] = stats["table"]["flash_region,B"][1:]
+            stats["table"]["flash,B"] = stats["table"]["flash,B"][1:]
+            stats["table"]["ram_region,B"] = stats["table"]["ram_region,B"][1:]
+            stats["table"]["ram,B"] = stats["table"]["ram,B"][1:]
+
+        stats["table"]["Build"].append(self.buildHash)
+        stats["table"]["flash_region,B"].append(self.buildStatsRow[1])
+        stats["table"]["flash,B"].append(self.buildStatsRow[2])
+        stats["table"]["ram_region,B"].append(self.buildStatsRow[3])
+        stats["table"]["ram,B"].append(self.buildStatsRow[4])
+
+        return stats
+
     def __parseInput(self, fileName):
-        warnings = {}
+
+        # TODO Move this to global config
+        __defaultSize = 5
+
         libraries = {}
-        stats = {}
+        warnings = {"size": __defaultSize, "table": {"Build": [], "Count": []}}
+        stats = {
+            "size": __defaultSize,
+            "table": {
+                "Build": [],
+                "flash_region,B": [],
+                "flash,B": [],
+                "ram_region,B": [],
+                "ram,B": [],
+            },
+        }
         lib_table_txt = ""
         warning_table_txt = ""
         stats_table_txt = ""
-        with open(fileName, "r") as input:
-            txt = input.read()
-            lib_table_start = txt.find("Libraries data")
-            if not lib_table_start:
-                return
-            lib_table_start += len("Libraries data\n")
-            retr_warnings_start = txt.find("## Warnings :", lib_table_start)
-            if not retr_warnings_start:
-                return
-            retr_stats_start = txt.find("## Stats :", retr_warnings_start)
-            if not retr_stats_start:
-                return
-            lib_table_txt = txt[lib_table_start:retr_warnings_start]
-            warning_table_txt = txt[retr_warnings_start:retr_stats_start]
-            stats_table_txt = txt[retr_stats_start:]
+        if os.access(fileName, os.R_OK):
+            with open(fileName, "r") as input:
+                txt = input.read()
+                lib_table_start = txt.find("Libraries data")
+                if not lib_table_start:
+                    return
+                lib_table_start += len("Libraries data\n")
+                retr_warnings_start = txt.find("## Warnings :", lib_table_start)
+                if not retr_warnings_start:
+                    return
+                retr_stats_start = txt.find("## Stats :", retr_warnings_start)
+                if not retr_stats_start:
+                    return
+                lib_table_txt = txt[lib_table_start:retr_warnings_start]
+                warning_table_txt = txt[retr_warnings_start:retr_stats_start]
+                stats_table_txt = txt[retr_stats_start:]
 
-        # print(lib_table_txt)
-        # print("_________________________________")
-        # print(warning_table_txt)
-        # print("_________________________________")
-        # print(stats_table_txt)
-        # print("_________________________________")
+            # print(lib_table_txt)
+            # print("_________________________________")
+            # print(warning_table_txt)
+            # print("_________________________________")
+            # print(stats_table_txt)
+            # print("_________________________________")
 
-        libraries = self.__parse_lib_table(lib_table_txt)
-        warnings = self.__parse_retrospective_table(warning_table_txt)
-        stats = self.__parse_retrospective_table(stats_table_txt)
+            libraries = self.__parse_lib_table(lib_table_txt)
+            warnings = self.__parse_retrospective_table(warning_table_txt)
+            stats = self.__parse_retrospective_table(stats_table_txt)
+
+        if self.buildHash not in warnings["table"]["Build"]:
+            warnings = self.__invokeSelfWarnings(warnings)
+
+        if self.buildHash not in stats["table"]["Build"]:
+            stats = self.__invokeSelfStats(stats)
 
         # print(warnings)
         # print(stats)
