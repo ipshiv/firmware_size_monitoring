@@ -13,12 +13,11 @@ def main(path):
             "build_sha": "",
             "warnings": 0,
             "build_stats_text": "",
-            "build_stats_row": "",
             "lib_stats_markdown": "",
         },
         "retrospective": {
-            "warnings_markdown": {"size": 0, "table_rows": []},
-            "stats": {"size": 0, "table_rows": []},
+            "warnings_markdown": "",
+            "stats_markdown": "",
         },
     }
     root_path = path
@@ -43,6 +42,9 @@ def main(path):
         output_data["current_build"]["lib_stats_markdown"] = sparser.generateDiffTable(
             os.path.join(root_path, "resources/STATS.md")
         )
+    
+    output_data["retrospective"]["warnings_markdown"] = sparser.generateWarningsTable(os.path.join(res_path))
+    output_data["retrospective"]["stats_markdown"] = sparser.generateStatsTable(os.path.join(res_path))
 
     print(output_data)
 
