@@ -5,7 +5,7 @@ def main():
     sparser = StatsParserZephyr("test_input/output.txt", "test_input/status.txt", "#31344")
     sparser.printStatsWarnings()
     sparser.printStatsMemory()
-    sparser.printStatsTable()
+    sparser.generateLibsTable()
     sparser.printDiffwarnings("templates/STATS_ex.md")
     sparser.printDiffLibraries("templates/STATS_ex.md")
     sparser.plotAsciiGraphWarnings("templates/STATS_ex.md")

@@ -316,7 +316,7 @@ class StatsParserZephyr:
                 "{}\t{}\t{}\t{}".format(value["text"], value["bss"], value["data"], key)
             )
 
-    def generateStatsTable(self):
+    def generateLibsTable(self):
         self.__calculateLibraries()
         self.__calculateColumnsWidth()
         headerColText = " " * (self.statsOutputTable[".textLen"] - len(" .text"))
@@ -454,7 +454,7 @@ class StatsParserZephyr:
         return markdownTable
 
     def printStatsTable(self):
-        mTable = self.generateStatsTable()
+        mTable = self.generateLibsTable()
         print(mTable)
 
     def printDiffwarnings(self, input):
