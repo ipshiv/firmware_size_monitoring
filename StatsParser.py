@@ -493,6 +493,29 @@ class StatsParserZephyr:
             )
         return markdownTable
 
+    def __generateRetrospectiveTable(self, name, data):
+        __defaultWidth = 15
+
+        markdownTable = "## {} : {}\n".format(name, str(data["size"]))
+
+        for k in list(data["table"].keys()):
+            markdownTable += "| {}{}".format(k, " " * (__defaultWidth - len(k)))
+        markdownTable += "|\n"
+
+        markdownTable += ("|{}".format("-" * (__defaultWidth + 1))) * len(
+            list(data["table"].keys())
+        )
+        markdownTable += "|\n"
+
+        for x in range(len(data["table"]["Build"])):
+            for k, v in data["table"].items():
+                markdownTable += "| {}{}".format(
+                    v[x], " " * (__defaultWidth - len(str(v[x])))
+                )
+            markdownTable += "|\n"
+
+        return markdownTable
+
     def generateDiffTable(self, input):
         inputData = self.__parseInput(input)
         self.__calculateColumnsWidth()
@@ -500,6 +523,14 @@ class StatsParserZephyr:
         diff = self.__calculateDiffLibraries(libraries)
         markdownTable = self.__generateDiffTable(diff)
         return markdownTable
+
+    def generateWarningsTable(self, input):
+        inputData = self.__parseInput(input)
+        return self.__generateRetrospectiveTable("Warnings", inputData["warnings"])
+
+    def generateStatsTable(self, input):
+        inputData = self.__parseInput(input)
+        return self.__generateRetrospectiveTable("Stats", inputData["stats"])
 
     def printStatsTable(self):
         mTable = self.generateLibsTable()
