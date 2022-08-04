@@ -4,6 +4,38 @@ from git import Repo
 
 from StatsParser import StatsParserZephyr
 
+def generateStatsMd(path, data):
+    output = """
+# Latest build {} stats
+## Warnings 
+{}
+## Memory utilization
+```
+{}
+```
+## Libraries data
+{}
+
+# Retrospective
+{}
+
+![img](graphWarnings.svg)
+
+{}
+
+![img](graphStats.svg)
+    """.format(
+        data["current_build"]["build_sha"],
+        data["current_build"]["warnings"],
+        data["current_build"]["build_stats_text"],
+        data["current_build"]["lib_stats_markdown"],
+        data["retrospective"]["warnings_markdown"],
+        data["retrospective"]["stats_markdown"]
+    )
+    print(output)
+    with open(path, 'w') as file:
+        file.write(output)
+
 
 def main(path):
     if path is None:
@@ -43,7 +75,7 @@ def main(path):
     output_data["retrospective"]["warnings_markdown"] = sparser.generateWarningsTable(os.path.join(res_path))
     output_data["retrospective"]["stats_markdown"] = sparser.generateStatsTable(os.path.join(res_path))
 
-    print(output_data)
+    generateStatsMd(res_path, output_data)
 
 
 if __name__ == "__main__":
