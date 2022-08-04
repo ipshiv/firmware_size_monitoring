@@ -2,7 +2,7 @@ from StatsParser import StatsParserZephyr
 
 
 def main():
-    sparser = StatsParserZephyr("test_input/output.txt", "test_input/status.txt")
+    sparser = StatsParserZephyr("test_input/output.txt", "test_input/status.txt", "#31344")
     sparser.printStatsWarnings()
     sparser.printStatsMemory()
     sparser.printStatsTable()

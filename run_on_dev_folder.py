@@ -24,7 +24,8 @@ def main(path):
     repo = Repo(root_path)
     output_data["current_build"]["build_sha"] = "#" + repo.heads[0].commit.hexsha[:7]
     sparser = StatsParserZephyr(
-        os.path.join(root_path, "output.txt"), os.path.join(root_path, "status.txt")
+        os.path.join(root_path, "output.txt"), os.path.join(root_path, "status.txt"),
+        output_data["current_build"]["build_sha"]
     )
     output_data["current_build"]["warnings"] = sparser.countWarnings
     output_data["current_build"]["build_stats_text"] = sparser.buildStats
