@@ -6,6 +6,8 @@ from StatsParser import StatsParserZephyr
 
 
 def main(path):
+    if path is None:
+        raise Exception("Error enter the path using --path or -p argument")
     output_data = {
         "current_build": {
             "build_sha": "",
