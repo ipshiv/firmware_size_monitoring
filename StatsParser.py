@@ -531,7 +531,8 @@ class StatsParserZephyr:
         ax.bar_label(rects1, padding=3)
 
         fig.tight_layout()
-        plt.savefig("templates/graphWarnings.svg", dpi=150)
+        input = input.replace("STATS.md", "graphWarnings.svg")
+        plt.savefig(input, dpi=150)
 
     def plotGraphStats(self, input):
         inputData = self.__parseInput(input)
@@ -563,5 +564,5 @@ class StatsParserZephyr:
         ax.bar_label(rects2, padding=3)
 
         fig.tight_layout()
-
-        plt.savefig("templates/graphStats.svg", dpi=150)
+        input = input.replace("STATS.md", "graphStats.svg")
+        plt.savefig(input, dpi=150)
