@@ -6,9 +6,14 @@ import numpy as np
 
 
 class StatsParserZephyr:
-    def __init__(self, buildOutput="", statsOutput=""):
+    def __init__(self, buildOutput="", statsOutput="", buildHash=""):
         if not os.access(buildOutput, os.R_OK) or not os.access(statsOutput, os.R_OK):
             raise Exception("Input files are unreadable or not exist!")
+
+        if not buildHash:
+            raise Exception("Register build hash, please!")
+
+        self.buildHash = buildHash
 
         self.buildStats = ""
         self.buildStatsRow = []
@@ -51,7 +56,13 @@ class StatsParserZephyr:
                 if "K" not in tmp_arr[1]
                 else int(tmp_arr[1].replace("K", "")) * 1000
             )
-            self.buildStatsRow = ["", flas_region, flash_util, sram_region, sram_util]
+            self.buildStatsRow = [
+                self.buildHash,
+                flas_region,
+                flash_util,
+                sram_region,
+                sram_util,
+            ]
 
         self.statsLibraries = {}
         self.statsFiles = []
