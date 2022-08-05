@@ -1,0 +1,64 @@
+  mbed-tools compile -m DISCO_F412ZG -t GCC_ARM
+Configuring project and generating build system...
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Projects/mbed_dev/mbed-os-example-blinky/cmake_build/DISCO_F412ZG/develop/GCC_ARM
+Building Mbed project...
+[2/4] Building CXX object CMakeFiles/mbed-os-example-blinky.dir/main.cpp.obj
+C:/Projects/mbed_dev/mbed-os-example-blinky/main.cpp: In function 'void led_handler()':
+C:/Projects/mbed_dev/mbed-os-example-blinky/main.cpp:48:35: warning: 'osEvent rtos::Queue<T, queue_sz>::get(uint32_t) [with T = long unsigned int; long unsigned int queue_sz = 32; uint32_t = long unsigned int]' is deprecated: Replaced with try_get and try_get_for. In future get will be an untimed blocking call. [since mbed-os-6.0.0] [-Wdeprecated-declarations]
+   48 |     osEvent evt = event_queue.get();
+      |                                   ^
+In file included from c:\projects\mbed_dev\mbed-os-example-blinky\mbed-os\rtos\include\rtos\mail.h:29,
+                 from c:\projects\mbed_dev\mbed-os-example-blinky\mbed-os\rtos\include\rtos\rtos.h:33,
+                 from C:/Projects/mbed_dev/mbed-os-example-blinky/mbed-os/mbed.h:23,
+                 from C:/Projects/mbed_dev/mbed-os-example-blinky/main.cpp:5:
+c:\projects\mbed_dev\mbed-os-example-blinky\mbed-os\rtos\include\rtos\queue.h:311:13: note: declared here
+  311 |     osEvent get(uint32_t millisec = osWaitForever)
+      |             ^~~
+[3/4] Building CXX object CMakeFiles/mbed-os-example-blinky.dir/button_handler/src/button_handler.cpp.obj
+C:/Projects/mbed_dev/mbed-os-example-blinky/button_handler/src/button_handler.cpp: In member function 'int ButtonHandler::registerEvent(uint32_t, button_event, uint16_t)':
+C:/Projects/mbed_dev/mbed-os-example-blinky/button_handler/src/button_handler.cpp:71:39: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'int' [-Wformat=]
+   71 |         printf("Button %ld >> Event %ld >> Registered\n", b.id(), evt_type);
+      |                                     ~~^                           ~~~~~~~~
+      |                                       |                           |
+      |                                       long int                    int
+      |                                     %d
+In file included from c:\progra~2\gnuarm~1\92020-~1\arm-none-eabi\include\c++\9.3.1\vector:72,
+                 from C:/Projects/mbed_dev/mbed-os-example-blinky/button_handler/include/button.h:19,
+                 from C:/Projects/mbed_dev/mbed-os-example-blinky/button_handler/src/button_handler.cpp:13:
+c:\progra~2\gnuarm~1\92020-~1\arm-none-eabi\include\c++\9.3.1\bits\vector.tcc: In member function 'void std::vector<_Tp, _Alloc>::_M_realloc_insert(std::vector<_Tp, _Alloc>::iterator, _Args&& ...) [with _Args = {const event&}; _Tp = event; _Alloc = std::allocator<event>]':
+c:\progra~2\gnuarm~1\92020-~1\arm-none-eabi\include\c++\9.3.1\bits\vector.tcc:426:7: note: parameter passing for argument of type 'std::vector<event>::iterator' {aka '__gnu_cxx::__normal_iterator<event*, std::vector<event> >'} changed in GCC 7.1
+  426 |       vector<_Tp, _Alloc>::
+      |       ^~~~~~~~~~~~~~~~~~~
+In file included from c:\progra~2\gnuarm~1\92020-~1\arm-none-eabi\include\c++\9.3.1\vector:67,
+                 from C:/Projects/mbed_dev/mbed-os-example-blinky/button_handler/include/button.h:19,
+                 from C:/Projects/mbed_dev/mbed-os-example-blinky/button_handler/src/button_handler.cpp:13:
+c:\progra~2\gnuarm~1\92020-~1\arm-none-eabi\include\c++\9.3.1\bits\stl_vector.h: In member function 'bool Button::registerEvent(button_event, uint16_t, uint16_t)':
+c:\progra~2\gnuarm~1\92020-~1\arm-none-eabi\include\c++\9.3.1\bits\stl_vector.h:1195:4: note: parameter passing for argument of type '__gnu_cxx::__normal_iterator<event*, std::vector<event> >' changed in GCC 7.1
+ 1195 |    _M_realloc_insert(end(), __x);
+      |    ^~~~~~~~~~~~~~~~~
+[4/4] Linking CXX executable mbed-os-example-blinky.elf
+-- built: C:/Projects/mbed_dev/mbed-os-example-blinky/cmake_build/DISCO_F412ZG/develop/GCC_ARM/mbed-os-example-blinky.bin
+-- built: C:/Projects/mbed_dev/mbed-os-example-blinky/cmake_build/DISCO_F412ZG/develop/GCC_ARM/mbed-os-example-blinky.hex
+| Module                                   |     .text |    .data |      .bss |
+|------------------------------------------|-----------|----------|-----------|
+| TARGET_DISCO_F412ZG\PeripheralPins.c.obj |     0(+0) |    0(+0) |     0(+0) |
+| [fill]                                   |  132(+30) |    0(+0) |   35(+11) |
+| [lib]\c.a                                |  8248(+0) | 2108(+0) |    89(+0) |
+| [lib]\gcc.a                              |  4680(+0) |    0(+0) |     0(+0) |
+| [lib]\misc                               |   188(+0) |    4(+0) |    28(+0) |
+| [lib]\nosys.a                            |    32(+0) |    0(+0) |     0(+0) |
+| [lib]\stdc++.a                           |  4704(+0) |    8(+0) |    44(+0) |
+| button_handler\src                       | 1992(-70) |    0(+0) |   317(+1) |
+| main.cpp.obj                             |  572(+40) |    0(+0) |  768(+12) |
+| mbed-os\cmsis                            |  8960(+0) |  168(+0) |  5953(+0) |
+| mbed-os\drivers                          |   652(+0) |    0(+0) |     0(+0) |
+| mbed-os\events                           |  1204(+0) |    0(+0) |     0(+0) |
+| mbed-os\hal                              |  1396(+0) |    4(+0) |    58(+0) |
+| mbed-os\platform                         |  4584(+0) |  260(+0) |   348(+0) |
+| mbed-os\rtos                             |  1072(+0) |    0(+0) |     8(+0) |
+| mbed-os\targets                          |  8320(+0) |    8(+0) |  1000(+0) |
+| Subtotals                                | 46736(+0) | 2560(+0) | 8648(+24) |
+Total Static RAM memory (data + bss): 11208(+24) bytes
+Total Flash memory (text + data): 49296(+0) bytes
