@@ -1,4 +1,5 @@
 from copy import deepcopy
+import re
 
 
 class StatsParserZephyr:
@@ -67,6 +68,9 @@ class StatsParserZephyr:
                     str(value["total"])) * 2 + len(" (+) ")
 
         self.diFFOutputTable["nameLen"] += len(":yellow_circle:")
+        print(self.statsOutputTable)
+        print(self.diFFOutputTable)
+
     def __calculateLibraries(self):
         self.statsLibraries = {}
         for file in self.statsFiles:
