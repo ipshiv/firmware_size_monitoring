@@ -650,7 +650,7 @@ class StatsParserZephyr:
 
 class StatsParserMbed:
     def __init__(self, buildOutput="", buildHash="", flashTotal=0, ramTotal=0):
-        if not os.access(buildOutput, os.R_OK) or not os.access(statsOutput, os.R_OK):
+        if not os.access(buildOutput, os.R_OK):
             raise Exception("Input files are unreadable or not exist!")
 
         if not buildHash:
