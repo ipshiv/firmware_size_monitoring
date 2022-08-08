@@ -660,27 +660,33 @@ class StatsParserMbed:
 
         self.buildStats = ""
         self.buildStatsRow = []
+        stats = ""
         with open(buildOutput, "r") as input:
             txt = input.read()
             txt_array = txt.split("\n")
             self.countWarnings = len([line for line in txt_array if "warning:" in line])
             __num_of_lines_in_mem_stats = 2
+            stats_reg_start = txt.find("| Module")
+            stats_reg_end = txt.find("| Subtotals")
             mem_reg_start = txt.find("Total Static RAM ")
+            if not stats_reg_end:
+                stats_reg_end = mem_reg_start
             line_index = [
                 mem_reg_start + i
                 for i, c in enumerate(txt[mem_reg_start:])
                 if c == "\n"
             ]
             mem_reg_end = line_index[__num_of_lines_in_mem_stats - 1]
+            stats = txt[stats_reg_start:stats_reg_end]
             self.buildStats = txt[mem_reg_start:mem_reg_end]
             # | Build   | flash_region, B | flash, B | ram_region, B | ram, B |
             build_stats_array = self.buildStats.split("\n")
             # FLASH
-            txt = build_stats_array[0].replace("bytes", "").split(":")[-1]
+            txt = build_stats_array[1].replace("bytes", "").split(":")[-1]
             flash_util = re.sub("(\((\+|\-|)\d+\))", "", txt)
             flas_region = flashTotal
             # RAM
-            txt = build_stats_array[1].replace("bytes", "").split(":")[-1]
+            txt = build_stats_array[0].replace("bytes", "").split(":")[-1]
             sram_util = re.sub("(\((\+|\-|)\d+\))", "", txt)
             sram_region = ramTotal
             self.buildStatsRow = [
@@ -691,11 +697,17 @@ class StatsParserMbed:
                 sram_util,
             ]
 
+        # print("DBG >> count warnings >> {}".format(self.countWarnings))
+        # print("DBG >> build stats txt >>\n{}".format(self.buildStats))
+        # print("DBG >> build stats row >>{}".format(self.buildStatsRow))
+        # print("DBG >> stats txt >>\n{}".format(stats))
         self.statsLibraries = {}
         self.statsFiles = []
 
-        with open(statsOutput, "r") as input:
-            self.statsFiles = self.__extractStats(input.readlines()[2:])
+        self.statsFiles = self.__extractStats(stats.split("\n")[2:])
+
+        # print("DBG >> stats >> {}".format(self.statsFiles))
+
         self.statsOutputTable = {
             "nameLen": len(" Module "),
             ".textLen": len(" .text "),
@@ -718,20 +730,21 @@ class StatsParserMbed:
         statsFiles = []
 
         for statLine in stats:
-            statLine = statLine.replace("(ex", "")
-            statLine = statLine.replace(")\n", "")
-            line = statLine.split(" ")
+            statLine = re.sub("(\((\+|\-|)\d+\))", "", statLine)
+            print(statLine)
+            line = statLine.split("|")
             line = [x for x in line if x]
-            if len(line) < 6:
+            print(line)
+            if len(line) < 3:
                 break
             statsFiles.append(
                 {
-                    "text": int(line[0]),
-                    "data": int(line[1]),
-                    "bss": int(line[2]),
-                    "total": int(line[3]),
-                    "filename": line[4],
-                    "lib": line[5],
+                    "text": int(line[1]),
+                    "data": int(line[2]),
+                    "bss": int(line[3]),
+                    "total": int(line[3]) + int(line[2]) + int(line[1]),
+                    "filename": line[0].strip(),
+                    "lib": line[0].strip(),
                 }
             )
         return statsFiles
