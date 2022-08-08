@@ -4,6 +4,8 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
+# TODO Refactoring!!!! Extract parser and generators methods! Most part of Mbed parser repeats Zephyr ones
+
 
 class StatsParserZephyr:
     def __init__(self, buildOutput="", statsOutput="", buildHash=""):
