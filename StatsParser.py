@@ -22,7 +22,9 @@ class StatsParserZephyr:
         with open(buildOutput, "r") as input:
             txt = input.read()
             txt_array = txt.split("\n")
-            self.countWarnings = len([line for line in txt_array if "warning:" in line])
+            self.countWarnings = len(
+                [line for line in txt_array if "warning:" or "[Warning]" in line]
+            )
             __num_of_lines_in_mem_stats = 4
             mem_reg_start = txt.find("Memory region")
             line_index = [
@@ -666,7 +668,9 @@ class StatsParserMbed:
         with open(buildOutput, "r") as input:
             txt = input.read()
             txt_array = txt.split("\n")
-            self.countWarnings = len([line for line in txt_array if "warning:" in line])
+            self.countWarnings = len(
+                [line for line in txt_array if "warning:" or "[Warning]" in line]
+            )
             __num_of_lines_in_mem_stats = 2
             stats_reg_start = txt.find("| Module")
             stats_reg_end = txt.find("| Subtotals")
